@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio & Projects</title>
+  <style>
+    /* Basic Styling */
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f3f4f6;
+      color: #333;
+    }
+    h1, h2 {
+      color: #333;
+      text-align: center;
+    }
+    
+    /* Sections */
+    .section {
+      background-color: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Design */
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    /* To-Do List */
+    .todo-list input[type="text"] {
+      width: calc(100% - 80px);
+      padding: 8px;
+      margin-right: 10px;
+    }
+    .todo-list button {
+      padding: 8px;
+    }
+    .todo-item {
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Product Listing */
+    .product {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .filter-select {
+      padding: 8px;
+      width: 100%;
+    }
+
+    /* Media Query */
+    @media (max-width: 600px) {
+      .todo-list input[type="text"], .filter-select {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Portfolio Section -->
+    <div class="section">
+      <h1>My Portfolio</h1>
+      <div>
+        <h2>About Me</h2>
+        <p>I'm a web developer skilled in HTML, CSS, and JavaScript. Welcome to my portfolio page!</p>
+        
+        <h2>Projects</h2>
+        <ul>
+          <li>Project A - A responsive website design</li>
+          <li>Project B - An interactive to-do list</li>
+          <li>Project C - A product listing page with sorting and filtering</li>
+        </ul>
+
+        <h2>Contact</h2>
+        <p>Email: myemail@example.com</p>
+      </div>
+    </div>
+
+    <!-- To-Do List Section -->
+    <div class="section todo-list">
+      <h2>To-Do List</h2>
+      <input type="text" id="todoInput" placeholder="Add a new task">
+      <button onclick="addTodo()">Add</button>
+      <ul id="todoList"></ul>
+    </div>
+
+    <!-- Product Listing Section -->
+    <div class="section">
+      <h2>Product Listing</h2>
+      <label>Sort by:</label>
+      <select id="sortOption" class="filter-select" onchange="sortProducts()">
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+      </select>
+      <div id="productList"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // JavaScript for To-Do List with Local Storage
+    const todoListEl = document.getElementById('todoList');
+    const todoInput = document.getElementById('todoInput');
+
+    function loadTodos() {
+      const todos = JSON.parse(localStorage.getItem('todos')) || [];
+      todoListEl.innerHTML = '';
+      todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.className = 'todo-item';
+        li.textContent = todo;
+        li.appendChild(createDeleteButton());
+        todoListEl.appendChild(li);
+      });
+    }
+
+    function addTodo() {
+      const task = todoInput.value.trim();
+      if (task) {
+        const todos = JSON.parse(localStorage.getItem('todos')) || [];
+        todos.push(task);
+        localStorage.setItem('todos', JSON.stringify(todos));
+        todoInput.value = '';
+        loadTodos();
+      }
+    }
+
+    function createDeleteButton() {
+      const button = document.createElement('button');
+      button.textContent = 'Delete';
+      button.onclick = function () {
+        const todos = JSON.parse(localStorage.getItem('todos')) || [];
+        const index = todos.indexOf(this.parentElement.textContent);
+        if (index > -1) {
+          todos.splice(index, 1);
+          localStorage.setItem('todos', JSON.stringify(todos));
+          loadTodos();
+        }
+      };
+      return button;
+    }
+
+    // Load To-Do list on page load
+    loadTodos();
+
+    // JavaScript for Product Listing with Sorting
+    const products = [
+      { name: "Product A", price: 50 },
+      { name: "Product B", price: 30 },
+      { name: "Product C", price: 20 },
+      { name: "Product D", price: 40 }
+    ];
+
+    function displayProducts() {
+      const productListEl = document.getElementById('productList');
+      productListEl.innerHTML = '';
+      products.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = <span>${product.name}</span><span>$${product.price}</span>;
+        productListEl.appendChild(div);
+      });
+    }
+
+    function sortProducts() {
+      const sortOption = document.getElementById('sortOption').value;
+      products.sort((a, b) => {
+        if (sortOption === 'name') {
+          return a.name.localeCompare(b.name);
+        } else if (sortOption === 'price') {
+          return a.price - b.price;
+        }
+      });
+      displayProducts();
+    }
+
+    // Initial display of products
+    displayProducts();
+  </script>
+
+</body>
+</html>
